@@ -5,13 +5,28 @@ import { getTodayPuzzle, PuzzleData } from "./lib/getTodayPuzzle";
 
 export default function Home() {
   const [puzzle, setPuzzle] = useState<PuzzleData | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getTodayPuzzle().then(setPuzzle);
+    getTodayPuzzle()
+      .then((data) => {
+        if (!data) {
+          setError("Puzzle not found for today");
+        }
+        setPuzzle(data);
+      })
+      .catch((err) => {
+        console.error("Error fetching puzzle:", err);
+        setError("Failed to load puzzle");
+      });
   }, []);
 
+  if (error) {
+    return <p className="text-red-500 mt-10 text-center">{error}</p>;
+  }
+
   if (!puzzle) {
-    return <p className="text-center mt-10 text-gray-600">Loading today&apos;s puzzle...</p>;
+    return <p className="text-center mt-10 text-gray-600">Loading today's puzzle...</p>;
   }
 
   return (
@@ -28,3 +43,4 @@ export default function Home() {
     </main>
   );
 }
+
