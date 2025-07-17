@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { getTodayPuzzle, PuzzleData } from "./lib/getTodayPuzzle";
 
 export default function Home() {
@@ -32,11 +33,16 @@ export default function Home() {
   return (
     <main className="flex flex-col items-center p-6">
       <h1 className="text-3xl font-bold mb-4">🌍 Mapcha</h1>
-      <img
-        src={puzzle.clueImages[0]}
-        alt="Clue"
-        className="max-w-full rounded-xl shadow-md"
-      />
+      <div className="relative w-full max-w-2xl aspect-video">
+        <Image
+          src={puzzle.clueImages[0]}
+          alt="Location clue image"
+          fill
+          className="rounded-xl shadow-md object-cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
+          priority
+        />
+      </div>
       <p className="mt-4 text-gray-700">
         Can you guess where this is?
       </p>

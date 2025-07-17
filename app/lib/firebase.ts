@@ -1,7 +1,7 @@
 // app/lib/firebase.ts
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+import { getFirestore, type Firestore } from "firebase/firestore";
+import { getStorage, type FirebaseStorage } from "firebase/storage";
 
 // Debug logging for environment variables
 console.log("Checking Firebase environment variables:");
@@ -18,8 +18,8 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
 };
 
-let db;
-let storage;
+let db: Firestore;
+let storage: FirebaseStorage;
 
 try {
   const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
