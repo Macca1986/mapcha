@@ -13,7 +13,10 @@ export default function Home() {
       .then((data) => {
         if (!data) {
           setError("Puzzle not found for today");
+          return;
         }
+        console.log("Puzzle data:", data);
+        console.log("Image URL:", data.clueImages[0]);
         setPuzzle(data);
       })
       .catch((err) => {
@@ -41,6 +44,9 @@ export default function Home() {
           className="rounded-xl shadow-md object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
           priority
+          onError={(e) => {
+            console.error("Image failed to load:", e);
+          }}
         />
       </div>
       <p className="mt-4 text-gray-700">
