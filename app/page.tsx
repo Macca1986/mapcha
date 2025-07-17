@@ -26,7 +26,7 @@ export default function Home() {
   }
 
   if (!puzzle) {
-    return <p className="text-center mt-10 text-gray-600">Loading today's puzzle...</p>;
+    return <p className="text-center mt-10 text-gray-600">Loading today&apos;s puzzle...</p>;
   }
 
   return (
