@@ -3,10 +3,22 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { getTodayPuzzle, PuzzleData } from "./lib/getTodayPuzzle";
+import GuessInput from './components/GuessInput';
 
 export default function Home() {
   const [puzzle, setPuzzle] = useState<PuzzleData | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const [guesses, setGuesses] = useState<{ name: string; distance: number }[]>([]);
+  const [isCorrect, setIsCorrect] = useState(false);
+
+  const handleCorrectGuess = () => {
+    setIsCorrect(true);
+  };
+
+  const handleWrongGuess = (distance: number, guessName: string) => {
+    setGuesses((prev) => [...prev, { name: guessName, distance }]);
+  };
 
   useEffect(() => {
     getTodayPuzzle()
@@ -34,30 +46,29 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen p-6">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-center">🌍 Mapcha</h1>
-        
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <div className="flex justify-center">
-            <Image
-              src={puzzle.clueImages[0]}
-              alt="Location clue image"
-              width={600}
-              height={450}
-              className="rounded-lg"
-              priority
-              onError={(e) => {
-                console.error("Image failed to load:", e);
-              }}
-            />
-          </div>
-          
-          <p className="mt-6 text-lg text-gray-700 text-center">
-            Can you guess where this is?
+    <main className="flex flex-col items-center p-6">
+      <h1 className="text-3xl font-bold mb-4">🌍 Mapcha</h1>
+      <img
+        src={puzzle.clueImages[0]}
+        alt="Clue"
+        className="max-w-full rounded-xl shadow-md"
+      />
+
+      <GuessInput
+        correctLocation={puzzle.location}
+        onCorrectGuess={handleCorrectGuess}
+        onWrongGuess={handleWrongGuess}
+      />
+
+      {isCorrect ? (
+        <p className="mt-4 text-green-600 font-bold">🎉 You got it!</p>
+      ) : (
+        guesses.map((g, i) => (
+          <p key={i} className="text-sm text-gray-600">
+            ❌ {g.name} — {g.distance} km away
           </p>
-        </div>
-      </div>
+        ))
+      )}
     </main>
   );
 }
