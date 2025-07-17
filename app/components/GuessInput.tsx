@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { getDistance } from 'geolib';
+import LocationAutocomplete from './LocationAutocomplete';
 
 interface GuessInputProps {
   correctLocation: {
@@ -15,49 +16,43 @@ interface GuessInputProps {
 }
 
 export default function GuessInput({ correctLocation, onCorrectGuess, onWrongGuess }: GuessInputProps) {
-  const [guess, setGuess] = useState('');
-  
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // TEMP: hardcoded guess locations until we add autocomplete
-    const fakeGuessLocation = {
-      lat: 48.8566, // Paris
-      lng: 2.3522,
-    };
+  const handleLocationSelect = async (location: { name: string; lat: number; lng: number }) => {
+    setIsSubmitting(true);
 
-    const distance = getDistance(
-      { latitude: fakeGuessLocation.lat, longitude: fakeGuessLocation.lng },
-      { latitude: correctLocation.lat, longitude: correctLocation.lng }
-    );
+    try {
+      const distance = getDistance(
+        { latitude: location.lat, longitude: location.lng },
+        { latitude: correctLocation.lat, longitude: correctLocation.lng }
+      );
 
-    const distanceKm = Math.round(distance / 1000);
+      const distanceKm = Math.round(distance / 1000);
+      const isCorrect = location.name.toLowerCase().includes(correctLocation.city.toLowerCase()) ||
+                       distanceKm < 10; // Within 10km is considered correct
 
-    // TEMP logic — in real version, you'd get lat/lng from actual autocomplete
-    const isCorrect = distanceKm < 100; // e.g., within 100km is a win
-
-    if (isCorrect) {
-      onCorrectGuess();
-    } else {
-      onWrongGuess(distanceKm, guess);
+      if (isCorrect) {
+        onCorrectGuess();
+      } else {
+        onWrongGuess(distanceKm, location.name);
+      }
+    } catch (error) {
+      console.error('Error calculating distance:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 w-full max-w-sm">
-      <input
-        type="text"
-        value={guess}
-        onChange={(e) => setGuess(e.target.value)}
+    <div className="mt-6 w-full max-w-sm">
+      <LocationAutocomplete
+        onLocationSelect={handleLocationSelect}
         placeholder="Enter city or country"
-        className="w-full p-3 border border-gray-300 rounded-md"
       />
-      <button
-        type="submit"
-        className="mt-2 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-      >
-        Guess
-      </button>
-    </form>
+      
+      {isSubmitting && (
+        <p className="mt-2 text-sm text-gray-600">Calculating distance...</p>
+      )}
+    </div>
   );
 }
