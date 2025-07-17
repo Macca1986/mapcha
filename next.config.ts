@@ -5,9 +5,9 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'firebasestorage.googleapis.com',
+        hostname: 'upload.wikimedia.org',
         port: '',
-        pathname: '/v0/b/**',
+        pathname: '/wikipedia/commons/**',
       },
     ],
   },

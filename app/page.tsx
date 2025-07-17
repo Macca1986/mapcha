@@ -34,24 +34,30 @@ export default function Home() {
   }
 
   return (
-    <main className="flex flex-col items-center p-6">
-      <h1 className="text-3xl font-bold mb-4">🌍 Mapcha</h1>
-      <div className="relative w-full max-w-2xl aspect-video">
-        <Image
-          src={puzzle.clueImages[0]}
-          alt="Location clue image"
-          fill
-          className="rounded-xl shadow-md object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
-          priority
-          onError={(e) => {
-            console.error("Image failed to load:", e);
-          }}
-        />
+    <main className="min-h-screen p-6">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8 text-center">🌍 Mapcha</h1>
+        
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="flex justify-center">
+            <Image
+              src={puzzle.clueImages[0]}
+              alt="Location clue image"
+              width={600}
+              height={450}
+              className="rounded-lg"
+              priority
+              onError={(e) => {
+                console.error("Image failed to load:", e);
+              }}
+            />
+          </div>
+          
+          <p className="mt-6 text-lg text-gray-700 text-center">
+            Can you guess where this is?
+          </p>
+        </div>
       </div>
-      <p className="mt-4 text-gray-700">
-        Can you guess where this is?
-      </p>
     </main>
   );
 }

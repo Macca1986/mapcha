@@ -1,7 +1,6 @@
 // app/lib/getTodayPuzzle.ts
-import { db, storage } from "./firebase";
+import { db } from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { ref, getDownloadURL } from "firebase/storage";
 
 export interface PuzzleData {
   clueImages: string[];
@@ -25,23 +24,6 @@ export async function getTodayPuzzle(): Promise<PuzzleData | null> {
     if (!snapshot.exists()) return null;
 
     const data = snapshot.data() as PuzzleData;
-
-    // Get download URLs for all images
-    const downloadURLPromises = data.clueImages.map(async (imagePath) => {
-      try {
-        const imageRef = ref(storage, imagePath);
-        return await getDownloadURL(imageRef);
-      } catch (error) {
-        console.error(`Error getting download URL for ${imagePath}:`, error);
-        return null;
-      }
-    });
-
-    const downloadURLs = await Promise.all(downloadURLPromises);
-    
-    // Filter out any failed URLs and update the clueImages array
-    data.clueImages = downloadURLs.filter((url): url is string => url !== null);
-
     return data;
   } catch (error) {
     console.error("Error in getTodayPuzzle:", error);
